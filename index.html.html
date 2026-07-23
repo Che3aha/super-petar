@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#07112b">
+  <title>Neon Acorn Adventure</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050916;color:#fff;font-family:Arial,Helvetica,sans-serif}
+    body{background:radial-gradient(circle at 50% -20%,#243c75,#09112b 44%,#050916);overflow-x:hidden}
+    button,input{font:inherit}.shell{width:min(1180px,94vw);margin:auto;padding:18px 0 28px}.top{display:flex;align-items:center;justify-content:space-between;height:58px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.04em}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#d9ff68;color:#142000;font-size:24px;transform:rotate(-7deg);box-shadow:0 8px 25px #b9ff4433}
+    .brand small{display:block;color:#93a4c6;font-size:9px;letter-spacing:.25em}.tools{display:flex;gap:8px}.tools button,.pause{border:1px solid #ffffff20;background:#ffffff0c;color:#fff;border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer}
+    .frame{border:1px solid #ffffff26;border-radius:24px;overflow:hidden;background:#111a36;box-shadow:0 35px 90px #0008}.hud{height:66px;display:grid;grid-template-columns:repeat(4,1fr) 44px;align-items:center;padding:10px 20px;background:linear-gradient(90deg,#050b1df8,#131e40f8);gap:12px}.hud div{display:flex;flex-direction:column}.hud span{color:#7f91b8;font-size:9px;font-weight:900;letter-spacing:.17em}.hud b{font-size:18px}.gold{color:#ffe45c}.pause{padding:0;width:40px;height:40px}.progress{height:4px;background:#26304b}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#d9ff68,#ffe45c);box-shadow:0 0 14px #d9ff68}
+    .game{position:relative;aspect-ratio:16/9;background:#060b18}canvas{display:block;width:100%;height:100%;cursor:crosshair;touch-action:none}.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:7%;background:linear-gradient(90deg,#030819e8,#03081999 52%,transparent 82%)}.overlay.center{align-items:center;text-align:center;background:#030819c9;backdrop-filter:blur(8px)}
+    .eyebrow{color:#d9ff68;font-size:10px;font-weight:1000;letter-spacing:.22em;margin:0 0 12px}.overlay h1{font-size:clamp(38px,5.4vw,76px);line-height:.88;letter-spacing:-.06em;margin:0;font-weight:1000}.overlay h1 em{font-style:normal;color:#d9ff68}.overlay h2{font-size:clamp(38px,5vw,64px);margin:0 0 12px}.overlay p.copy{max-width:500px;color:#d4def2;line-height:1.5;font-weight:600}.name{display:flex;gap:10px;align-items:center;color:#aab8d3;font-size:9px;font-weight:900;letter-spacing:.15em;margin:4px 0 14px}.name input{width:120px;border:1px solid #ffffff2c;background:#03081999;color:#fff;border-radius:9px;padding:8px;text-transform:uppercase;font-weight:900}
+    .play{border:0;border-radius:14px;background:#d9ff68;color:#142000;padding:14px 24px;font-weight:1000;letter-spacing:.08em;cursor:pointer;box-shadow:0 10px 28px #b4ff4644}.tips{display:flex;gap:10px;margin-top:18px}.tips span{font-size:10px;color:#c4cce0;background:#080f2699;border:1px solid #ffffff1c;padding:7px 10px;border-radius:9px}.below{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:15px 20px;border:1px solid #ffffff14;background:#0b132bbd;border-radius:16px}.below b{font-size:12px;letter-spacing:.08em}.below small{display:block;color:#7f91b8;margin-top:4px}.levelbar{display:flex;align-items:center;gap:8px;min-width:220px}.levelbar>span{height:7px;flex:1;background:#25314e;border-radius:8px;overflow:hidden}.levelbar i{display:block;height:100%;background:#d9ff68}.hide{display:none!important}footer{text-align:center;color:#536486;font-size:9px;letter-spacing:.14em;margin-top:22px}
+    @media(max-width:650px){.shell{width:100%;padding:0 8px 18px}.top{height:62px}.frame{border-radius:17px}.hud{height:52px;padding:6px 9px;gap:5px;grid-template-columns:repeat(4,1fr) 34px}.hud span{font-size:7px}.hud b{font-size:11px}.pause{width:31px;height:31px}.overlay{padding:5%}.overlay h1{font-size:9vw}.overlay p.copy{font-size:10px;max-width:72%;margin:9px 0}.eyebrow{font-size:7px}.play{padding:10px 16px;font-size:10px}.tips{display:none}.name{margin-bottom:8px}.below{padding:10px}.below small{display:none}.levelbar{min-width:130px;font-size:9px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><div class="brand"><span class="mark">A</span><span>NEON ACORN<small>ADVENTURE</small></span></div><div class="tools"><button id="sound">🔊</button><button id="scoresBtn">🏆 SCORES</button></div></header>
+    <section class="frame">
+      <div class="hud"><div><span>SCORE</span><b id="score">000000</b></div><div><span>COINS</span><b class="gold" id="coins">◉ 0</b></div><div><span>LEVEL</span><b id="level">1/100</b></div><div><span>LIVES</span><b id="lives">♥ 3</b></div><button class="pause" id="pause">Ⅱ</button></div>
+      <div class="progress"><i id="progress"></i></div>
+      <div class="game">
+        <canvas id="game" width="960" height="540" aria-label="Platform game. Move mouse to run and click to jump."></canvas>
+        <div class="overlay" id="menu"><p class="eyebrow">100 UNIQUE COURSES • EXPANDED EDITION</p><h1>RUN BRIGHT.<br><em>JUMP HIGH.</em></h1><p class="copy">Guide Pip through 100 different levels with changing scenery, enemy species, stairways and moving elevators. Collect coins and reach the final gate.</p><label class="name">PLAYER NAME <input id="player" value="HERO" maxlength="10"></label><button class="play" id="play">▶ PLAY NOW</button><div class="tips"><span>↔ Move mouse to run</span><span>● Click to jump</span><span>P Pause</span></div></div>
+        <div class="overlay center hide" id="message"><p class="eyebrow" id="messageTop"></p><h2 id="messageTitle"></h2><p class="copy" id="messageCopy"></p><button class="play" id="messageBtn">CONTINUE</button></div>
+      </div>
+    </section>
+    <section class="below"><div><b id="world">DAWN MEADOW 1</b><small>Stairs, elevators and enemies change every level • Pink coin gives bonus power</small></div><div class="levelbar"><b id="levelSmall">LEVEL 1</b><span><i id="totalProgress" style="width:1%"></i></span><small>100</small></div></section>
+    <footer>NEON ACORN © 2026 • ONE-FILE GITHUB EDITION • 100 LEVELS + STAIRS + ELEVATORS</footer>
+  </main>
+  <script>
+  (() => {
+    const C=document.querySelector("#game"),X=C.getContext("2d"),W=960,H=540,GY=452;
+    const $=s=>document.querySelector(s), ui={score:$("#score"),coins:$("#coins"),level:$("#level"),lives:$("#lives"),progress:$("#progress"),menu:$("#menu"),msg:$("#message"),msgTop:$("#messageTop"),msgTitle:$("#messageTitle"),msgCopy:$("#messageCopy"),world:$("#world"),levelSmall:$("#levelSmall"),total:$("#totalProgress")};
+    const themes=[
+      ["Dawn Meadow","#7dd3fc","#d9f99d","#3f7f4e","#facc15"],
+      ["Candy Caverns","#312e81","#a855f7","#713f12","#f472b6"],
+      ["Moonlit Summit","#07112f","#2563eb","#334155","#67e8f9"],
+      ["Ember Valley","#7c2d12","#fb923c","#4a2618","#fef08a"],
+      ["Aurora Kingdom","#064e3b","#22d3ee","#164e63","#a7f3d0"]
+    ];
+    let state="menu", muted=false, mouse={x:480,on:false}, g=null, last=performance.now();
+    const rnd=(level,n)=>{const x=Math.sin((level+1)*917.13+n*113.77)*43758.5453;return x-Math.floor(x)};
+    const tone=kind=>{if(muted)return;const A=window.AudioContext||window.webkitAudioContext,c=new A,o=c.createOscillator(),v=c.createGain(),n=c.currentTime,notes={jump:[260,480],coin:[660,980],hit:[180,80],power:[360,720,980],win:[440,660,880,1100]}[kind];o.connect(v);v.connect(c.destination);v.gain.setValueAtTime(.07,n);notes.forEach((f,i)=>o.frequency.setValueAtTime(f,n+i*.07));v.gain.exponentialRampToValueAtTime(.001,n+notes.length*.08+.08);o.type=kind==="hit"?"sawtooth":"sine";o.start();o.stop(n+notes.length*.08+.1);setTimeout(()=>c.close(),500)};
+    function makeLevel(L,carry={}){
+      const t=themes[Math.floor(L/20)],len=3000+Math.min(1800,L*22),layout=L%10,platforms=[{x:0,y:GY,w:len,h:100,k:"ground"}];
+      const step=Math.max(245,390-L*1.25);
+      for(let x=430,i=0;x<len-300;x+=step,i++){const wave=layout%2?Math.sin(i*1.7):Math.cos(i*.9);platforms.push({x:x+rnd(L,i+20)*55,y:318+wave*72,w:135+rnd(L,i+40)*130,h:18,k:layout===3?"ice":"ledge"})}
+      const groups=1+L%3;
+      for(let a=0;a<groups;a++){const sx=620+a*((len-1200)/groups)+rnd(L,a+70)*180,rev=(L+a)%2,steps=4+(L+a)%4;for(let s=0;s<steps;s++){const z=rev?steps-1-s:s;platforms.push({x:sx+s*48,y:GY-(z+1)*34,w:52,h:(z+1)*34,k:"stair"})}}
+      const elevators=Array.from({length:1+L%4},(_,i)=>({x:980+i*((len-1600)/(1+L%4))+rnd(L,i+90)*170,y:360,base:340-rnd(L,i+100)*45,w:110+rnd(L,i+110)*45,h:17,range:80+(L*17+i*31)%115,speed:.012+(L+i)%5*.0025,phase:rnd(L,i+120)*6.28,prev:360,k:"elevator"}));
+      const count=22+Math.min(28,Math.floor(L/2)),coins=Array.from({length:count},(_,i)=>({x:300+i*((len-600)/count)+Math.sin(i*2)*55,y:300-i%4*32,got:false}));
+      const types=["walker","hopper","flyer","charger","orb"],ec=7+Math.min(18,Math.floor(L/4));
+      const enemies=Array.from({length:ec},(_,i)=>{const type=types[(L+i)%5],x=650+i*((len-1000)/ec),base=GY-34-(type==="flyer"?100+rnd(L,i+140)*100:0);return{x,y:base,base,type,vx:(i%2?1:-1)*Math.min(3.4,1.2+L*.025),alive:true,min:x-110,max:x+110,phase:rnd(L,i+150)*6.28}});
+      return{L,t,len,layout,platforms,elevators,coins,enemies,power:{x:len*.52,y:GY-70,got:false},powerTime:0,particles:[],score:carry.score||0,totalCoins:carry.totalCoins||0,lives:carry.lives??3,x:110,y:GY-52,vx:0,vy:0,w:38,h:52,grounded:false,inv:0,camera:0,checkpoint:110,finished:false};
+    }
+    function start(){g=makeLevel(0);state="play";ui.menu.classList.add("hide");ui.msg.classList.add("hide")}
+    function hud(){ui.score.textContent=String(g.score).padStart(6,"0");ui.coins.textContent="◉ "+g.totalCoins;ui.level.textContent=(g.L+1)+"/100";ui.lives.textContent="♥ "+g.lives;ui.progress.style.width=Math.min(100,g.x/g.len*100)+"%";ui.world.textContent=g.t[0].toUpperCase()+" "+(g.L%20+1);ui.levelSmall.textContent="LEVEL "+(g.L+1);ui.total.style.width=(g.L+1)+"%"}
+    const hit=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+    function burst(x,y,color,n=10){for(let i=0;i<n;i++)g.particles.push({x,y,vx:(Math.random()-.5)*7,vy:-Math.random()*6,life:35,color})}
+    function background(now){
+      const t=g.t,gr=X.createLinearGradient(0,0,0,H);gr.addColorStop(0,t[1]);gr.addColorStop(1,t[2]);X.fillStyle=gr;X.fillRect(0,0,W,H);const s=g.layout,scroll=g.camera*.12;X.save();
+      if(s===0){for(let i=0;i<7;i++){X.fillStyle="#ffffffaa";for(const [dx,dy,r] of [[0,12,22],[25,0,30],[55,13,21]]){X.beginPath();X.arc((i*210-scroll)%1300+dx,70+i%3*60+dy,r,0,7);X.fill()}}}
+      else if(s===1){X.fillStyle="#0f172b38";for(let i=0;i<9;i++){let x=(i*165-scroll)%1450;X.beginPath();X.moveTo(x,390);X.lineTo(x+100,110+i%4*45);X.lineTo(x+210,390);X.fill()}}
+      else if(s===2){for(let i=0;i<20;i++){X.strokeStyle=`hsla(${(g.L*37+i*19)%360},90%,85%,.5)`;X.beginPath();X.arc((i*83-scroll)%1200,65+(i*47)%300,9+i%5*6,0,7);X.stroke()}}
+      else if(s===3){X.fillStyle="#ffffff26";for(let i=0;i<15;i++){let x=(i*105-scroll)%1300;X.fillRect(x,155+i%4*44,10,240);X.beginPath();X.arc(x+5,140+i%4*44,40,0,7);X.fill()}}
+      else if(s===4){X.fillStyle="#ffee8c38";X.beginPath();X.arc(760,115,76,0,7);X.fill();X.fillStyle="#35150625";for(let i=0;i<8;i++)X.fillRect((i*190-scroll)%1400,295+i%3*24,150,95)}
+      else if(s===5){X.strokeStyle="#ffffff44";for(let i=0;i<22;i++){let x=(i*73-scroll)%1100;X.beginPath();X.moveTo(x,40+i%5*25);X.lineTo(x-35,170+i%6*42);X.stroke()}}
+      else if(s===6){for(let i=0;i<32;i++){X.fillStyle=i%4?"#ffffffaa":t[4];X.fillRect((i*97-scroll*.4)%1100,35+(i*61)%330,i%4?2:5,i%4?2:5)}}
+      else if(s===7){for(let i=0;i<13;i++){let x=(i*130-scroll)%1300;X.fillStyle=`hsla(${(g.L*29+i*25)%360},80%,75%,.2)`;X.beginPath();X.moveTo(x,390);X.lineTo(x+40,130+i%4*50);X.lineTo(x+78,390);X.fill()}}
+      else if(s===8){X.lineWidth=16;["#a7f3d033","#67e8f92c","#f472b622"].forEach((c,i)=>{X.strokeStyle=c;X.beginPath();X.moveTo(-40,105+i*55);X.bezierCurveTo(280,20+i*80,560,260-i*30,1020,80+i*60);X.stroke()})}
+      else{X.fillStyle="#0a142d30";for(let i=0;i<12;i++){let x=(i*120-scroll)%1250,h=80+i*37%210;X.fillRect(x,390-h,82,h)}}X.restore()
+    }
+    function draw(now){if(!g)return;background(now);const sx=x=>x-g.camera,t=g.t;
+      for(const p of g.platforms){if(sx(p.x)>W||sx(p.x+p.w)<0)continue;X.fillStyle=p.k==="stair"?"#7c3aed":p.k==="ice"?"#bae6fd":t[3];X.fillRect(sx(p.x),p.y,p.w,p.h);X.fillStyle=p.k==="stair"?"#c4b5fd":t[4];X.fillRect(sx(p.x),p.y,p.w,Math.min(9,p.h))}
+      for(const p of g.elevators){X.strokeStyle="#ffffff66";X.setLineDash([7,8]);X.beginPath();X.moveTo(sx(p.x+p.w/2),p.base-p.range);X.lineTo(sx(p.x+p.w/2),p.base+p.range);X.stroke();X.setLineDash([]);X.fillStyle="#172554";X.fillRect(sx(p.x),p.y,p.w,p.h);X.fillStyle="#67e8f9";X.fillRect(sx(p.x),p.y,p.w,6)}
+      const fx=sx(g.len-160);X.fillStyle="#e2e8f0";X.fillRect(fx,205,12,247);X.fillStyle="#fff";X.beginPath();X.moveTo(fx+12,215);X.lineTo(fx+115,250);X.lineTo(fx+12,285);X.fill();
+      for(const c of g.coins){if(c.got)continue;X.save();X.translate(sx(c.x),c.y);X.scale(.72+Math.abs(Math.sin(now/180))*.28,1);X.fillStyle="#fde047";X.shadowColor="#fbbf24";X.shadowBlur=16;X.beginPath();X.arc(0,0,12,0,7);X.fill();X.strokeStyle="#f59e0b";X.lineWidth=3;X.beginPath();X.arc(0,0,8,0,7);X.stroke();X.fillStyle="#a16207";X.font="900 12px Arial";X.textAlign="center";X.fillText("C",0,4);X.restore()}
+      if(!g.power.got){X.save();X.translate(sx(g.power.x),g.power.y);X.rotate(now/700);X.fillStyle="#f472b6";X.shadowColor="#f0abfc";X.shadowBlur=24;X.beginPath();X.arc(0,0,20,0,7);X.fill();X.strokeStyle="#fef08a";X.lineWidth=4;X.stroke();X.restore()}
+      const colors={walker:"#fb7185",hopper:"#a3e635",flyer:"#67e8f9",charger:"#f97316",orb:"#c084fc"};
+      for(const e of g.enemies){if(!e.alive)continue;const x=sx(e.x);X.fillStyle=colors[e.type];if(e.type==="flyer"){X.beginPath();X.moveTo(x,e.y+18);X.lineTo(x+19,e.y);X.lineTo(x+38,e.y+18);X.lineTo(x+19,e.y+34);X.fill()}else if(e.type==="orb"){X.beginPath();X.arc(x+19,e.y+17,18,0,7);X.fill()}else if(e.type==="hopper"){X.beginPath();X.ellipse(x+19,e.y+18,19,16,0,0,7);X.fill()}else{X.beginPath();X.roundRect(x,e.y,38,34,e.type==="charger"?4:12);X.fill()}X.fillStyle="#111827";X.beginPath();X.arc(x+11,e.y+13,3,0,7);X.arc(x+27,e.y+13,3,0,7);X.fill()}
+      X.save();X.translate(sx(g.x)+19,g.y+26);if(g.vx<0)X.scale(-1,1);if(g.inv>0&&Math.floor(g.inv/5)%2)X.globalAlpha=.3;X.fillStyle=g.powerTime>0?"#f9a8d4":"#b45309";X.beginPath();X.ellipse(0,7,18,24,0,0,7);X.fill();X.fillStyle="#78350f";X.beginPath();X.ellipse(0,-13,22,10,0,0,7);X.fill();X.fillStyle="#fef3c7";X.beginPath();X.arc(7,5,4,0,7);X.fill();X.fillStyle="#111827";X.beginPath();X.arc(8,5,2,0,7);X.fill();X.restore();
+      for(const p of g.particles){X.globalAlpha=p.life/35;X.fillStyle=p.color;X.fillRect(sx(p.x),p.y,5,5)}X.globalAlpha=1
+    }
+    function update(now,dt){for(const p of g.elevators){p.prev=p.y;p.y=p.base+Math.sin(now*p.speed+p.phase)*p.range}
+      if(mouse.on){const d=mouse.x+g.camera-(g.x+19);g.vx+=Math.sign(d)*(Math.abs(d)>18?.55:0);if(Math.abs(d)<20)g.vx*=.72}g.vx*=.9;g.vx=Math.max(-6.5,Math.min(6.5,g.vx));g.vy=Math.min(15,g.vy+.78*dt);const old=g.y;g.x=Math.max(0,g.x+g.vx*dt);g.y+=g.vy*dt;g.grounded=false;
+      for(const p of [...g.platforms,...g.elevators])if(hit({x:g.x+6,y:g.y,w:g.w-12,h:g.h},p)&&old+g.h<=p.y+14&&g.vy>=0){g.y=p.y-g.h;g.vy=0;g.grounded=true;if(p.k==="elevator")g.y+=p.y-p.prev}
+      if(g.y>H+80){g.lives--;tone("hit");if(g.lives<=0)return end(false);g.x=g.checkpoint;g.y=250;g.vy=0;g.inv=90}if(g.x>g.checkpoint+900)g.checkpoint=g.x-80;
+      for(const c of g.coins)if(!c.got&&Math.hypot(g.x+19-c.x,g.y+25-c.y)<35){c.got=true;g.score+=150;g.totalCoins++;burst(c.x,c.y,"#fde047",8);tone("coin")}
+      if(!g.power.got&&Math.hypot(g.x+19-g.power.x,g.y+25-g.power.y)<42){g.power.got=true;g.powerTime=600;g.score+=1000;burst(g.power.x,g.power.y,"#f472b6",24);tone("power")}if(g.powerTime>0)g.powerTime-=dt;if(g.inv>0)g.inv-=dt;
+      for(const e of g.enemies)if(e.alive){if(e.type==="flyer"){e.x+=e.vx*.75*dt;e.y=e.base+Math.sin(now*.004+e.phase)*46}else if(e.type==="hopper"){e.x+=e.vx*.65*dt;e.y=e.base-Math.abs(Math.sin(now*.0045+e.phase))*74}else if(e.type==="charger"){e.x+=(Math.abs(g.x-e.x)<330?Math.sign(g.x-e.x)*Math.abs(e.vx)*1.8:e.vx)*dt}else if(e.type==="orb"){e.x+=e.vx*.45*dt;e.y=e.base-55+Math.cos(now*.0035+e.phase)*58}else e.x+=e.vx*dt;if(e.x<e.min||e.x>e.max)e.vx*=-1;
+        if(hit(g,{x:e.x,y:e.y,w:38,h:34})){if((g.vy>2&&g.y+g.h<e.y+22)||g.powerTime>0){e.alive=false;g.vy=-9;g.score+=300;burst(e.x,e.y,"#fb7185",14);tone("coin")}else if(g.inv<=0){g.lives--;g.inv=110;g.vy=-8;tone("hit");if(g.lives<=0)return end(false)}}}
+      g.particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.2;p.life--});g.particles=g.particles.filter(p=>p.life>0);g.camera+=((g.x-260)-g.camera)*.08;g.camera=Math.max(0,Math.min(g.len-W,g.camera));
+      if(g.x>g.len-180&&!g.finished){g.finished=true;g.score+=2000+g.lives*500;tone("win");if(g.L===99)return end(true);state="transition";ui.msgTop.textContent="GATE CLEARED";ui.msgTitle.textContent="LEVEL "+(g.L+1)+" COMPLETE!";ui.msgCopy.textContent="Next: "+themes[Math.floor((g.L+1)/20)][0]+" "+((g.L+1)%20+1);ui.msg.classList.remove("hide");setTimeout(()=>{g=makeLevel(g.L+1,g);state="play";ui.msg.classList.add("hide")},1500)}hud()
+    }
+    function end(win){state="end";const name=($("#player").value.trim()||"HERO").slice(0,10).toUpperCase(),scores=JSON.parse(localStorage.getItem("neonAcornScores")||"[]");scores.push({name,score:g.score,level:g.L+1});scores.sort((a,b)=>b.score-a.score);localStorage.setItem("neonAcornScores",JSON.stringify(scores.slice(0,8)));ui.msgTop.textContent=win?"ALL 100 GATES CLEARED":"THE TRAIL GOT TRICKY";ui.msgTitle.textContent=win?"YOU WON!":"TRY AGAIN";ui.msgCopy.textContent="Final score: "+g.score.toLocaleString();ui.msg.classList.remove("hide");$("#messageBtn").textContent="↻ PLAY AGAIN";$("#messageBtn").onclick=start}
+    function loop(now){const dt=Math.min(1.7,(now-last)/16.67);last=now;if(g&&state==="play")update(now,dt);if(g)draw(now);requestAnimationFrame(loop)}requestAnimationFrame(loop);
+    function jump(){if(state==="play"&&g&&g.grounded){g.vy=-13.2;g.grounded=false;tone("jump")}}
+    C.addEventListener("pointermove",e=>{const r=C.getBoundingClientRect();mouse={x:(e.clientX-r.left)*960/r.width,on:true}});C.addEventListener("pointerdown",jump);
+    $("#play").onclick=start;$("#messageBtn").onclick=start;$("#sound").onclick=()=>{$("#sound").textContent=(muted=!muted)?"🔇":"🔊"};
+    $("#pause").onclick=()=>{if(state==="play"){state="pause";ui.msgTop.textContent="TAKE A BREATH";ui.msgTitle.textContent="PAUSED";ui.msgCopy.textContent="Press P or continue when ready.";$("#messageBtn").textContent="▶ RESUME";ui.msg.classList.remove("hide");$("#messageBtn").onclick=()=>{state="play";ui.msg.classList.add("hide")}}else if(state==="pause"){state="play";ui.msg.classList.add("hide")}};
+    $("#scoresBtn").onclick=()=>{const scores=JSON.parse(localStorage.getItem("neonAcornScores")||"[]");alert(scores.length?scores.map((s,i)=>`${i+1}. ${s.name} — ${s.score}`).join("\\n"):"No scores yet — be the first!")}
+    addEventListener("keydown",e=>{if(e.code==="Space"||e.code==="ArrowUp"){e.preventDefault();jump()}if(g&&e.code==="ArrowLeft"){mouse.on=false;g.vx=-6}if(g&&e.code==="ArrowRight"){mouse.on=false;g.vx=6}if(e.code==="KeyP")$("#pause").click()});
+    g=makeLevel(0);draw(performance.now());
+  })();
+  </script>
+</body>
+</html>
